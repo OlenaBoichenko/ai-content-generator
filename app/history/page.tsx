@@ -137,7 +137,8 @@ export default function HistoryPage() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Content History</h1>
               <p className="text-gray-600 mt-1">View and manage your generated content</p>
@@ -152,6 +153,28 @@ export default function HistoryPage() {
               <button
                 onClick={handleLogout}
                 className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Layout */}
+          <div className="lg:hidden space-y-3">
+            <div className="text-center">
+              <h1 className="text-2xl font-bold text-gray-900">Content History</h1>
+              <p className="text-gray-600 text-sm mt-1">View and manage your generated content</p>
+            </div>
+            <div className="flex items-center justify-center gap-2">
+              <Link
+                href="/"
+                className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Back to Home
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-gray-600 text-white text-sm rounded-lg hover:bg-gray-700 transition-colors"
               >
                 Logout
               </button>

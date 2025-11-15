@@ -22,49 +22,6 @@ A powerful SaaS platform that leverages the OpenAI API to generate high-quality 
 5. Delete content you no longer need
 
 
-## Database Schema
-
-The application uses a simple SQLite database with the following schema:
-
-```prisma
-model GeneratedContent {
-  id          String   @id @default(cuid())
-  title       String
-  content     String
-  contentType String   // 'blog', 'marketing', 'social-media'
-  template    String   // Template name used
-  prompt      String   // User's input prompt
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-```
-
-
-## Deployment
-
-### Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Import the repository in Vercel
-3. Add your `OPENAI_API_KEY` environment variable in Vercel settings
-4. Deploy!
-
-**Note**: For production, consider using a more robust database like PostgreSQL instead of SQLite.
-
-### Other Platforms
-
-The application can be deployed to any platform that supports Next.js:
-- Netlify
-- Railway
-- Render
-- AWS
-- Google Cloud
-
-Make sure to:
-1. Set the `OPENAI_API_KEY` environment variable
-2. Configure the database for production use
-3. Run `npx prisma migrate deploy` during deployment
-
 ## License
 
 This project is open source and available under the MIT License.
