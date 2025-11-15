@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Content Generator
 
-## Getting Started
+A powerful SaaS platform that leverages the OpenAI API to generate high-quality marketing content, blog posts, and social media captions. Built with modern web technologies for a seamless user experience.
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Usage
+
+### Generating Content
+
+1. Select a content type filter (Blog, Marketing, or Social Media)
+2. Choose a template from the list
+3. Fill in the required input fields
+4. Click "Generate Content"
+5. View, copy, or download your generated content
+
+### Managing History
+
+1. Click "View History" in the header
+2. Browse your previously generated content
+3. Filter by content type
+4. Export content in your preferred format
+5. Delete content you no longer need
+
+
+## Database Schema
+
+The application uses a simple SQLite database with the following schema:
+
+```prisma
+model GeneratedContent {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  contentType String   // 'blog', 'marketing', 'social-media'
+  template    String   // Template name used
+  prompt      String   // User's input prompt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Vercel (Recommended)
 
-## Learn More
+1. Push your code to GitHub
+2. Import the repository in Vercel
+3. Add your `OPENAI_API_KEY` environment variable in Vercel settings
+4. Deploy!
 
-To learn more about Next.js, take a look at the following resources:
+**Note**: For production, consider using a more robust database like PostgreSQL instead of SQLite.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Other Platforms
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The application can be deployed to any platform that supports Next.js:
+- Netlify
+- Railway
+- Render
+- AWS
+- Google Cloud
 
-## Deploy on Vercel
+Make sure to:
+1. Set the `OPENAI_API_KEY` environment variable
+2. Configure the database for production use
+3. Run `npx prisma migrate deploy` during deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open source and available under the MIT License.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+
