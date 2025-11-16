@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+/**
+ * Interface representing a content item from user's history
+ */
 interface ContentItem {
   id: string;
   title: string;
@@ -12,21 +15,36 @@ interface ContentItem {
   createdAt: string;
 }
 
+/**
+ * History Page Component
+ * Displays user's generated content history with filtering, viewing, and export capabilities
+ */
 export default function HistoryPage() {
+  // State for storing the list of content items
   const [history, setHistory] = useState<ContentItem[]>([]);
+  // State for content type filter (all, blog, marketing, social-media)
   const [selectedType, setSelectedType] = useState<string>('all');
+  // State for currently selected content item to display
   const [selectedContent, setSelectedContent] = useState<ContentItem | null>(null);
+  // Loading state for async operations
   const [isLoading, setIsLoading] = useState(true);
+  // Error message state
   const [error, setError] = useState<string>('');
 
+  // Fetch history when component mounts or when filter changes
   useEffect(() => {
     fetchHistory();
   }, [selectedType]);
 
+  /**
+   * Fetches content history from API based on selected filter
+   * Handles authentication errors by redirecting to login page
+   */
   const fetchHistory = async () => {
     setIsLoading(true);
     setError('');
     try {
+      // Build URL with filter parameter if specific type is selected
       const url = selectedType === 'all'
         ? '/api/history'
         : `/api/history?type=${selectedType}`;
@@ -35,6 +53,7 @@ export default function HistoryPage() {
       const data = await response.json();
 
       if (!response.ok) {
+        // Handle unauthorized access
         if (response.status === 401) {
           setError('Please log in to view your content history');
           window.location.href = '/';
@@ -52,6 +71,11 @@ export default function HistoryPage() {
     }
   };
 
+  /**
+   * Deletes a content item from history
+   * Shows confirmation dialog before deletion
+   * @param id - ID of the content item to delete
+   */
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this content?')) return;
 
@@ -61,7 +85,9 @@ export default function HistoryPage() {
       });
 
       if (response.ok) {
+        // Remove deleted item from state
         setHistory(history.filter(item => item.id !== id));
+        // Clear selection if deleted item was selected
         if (selectedContent?.id === id) {
           setSelectedContent(null);
         }
@@ -72,18 +98,27 @@ export default function HistoryPage() {
     }
   };
 
+  /**
+   * Downloads content in specified format
+   * Creates a blob and triggers browser download
+   * @param content - Content item to download
+   * @param format - File format (txt, md, or json)
+   */
   const handleDownload = (content: ContentItem, format: 'txt' | 'md' | 'json') => {
     let blob: Blob;
     let filename: string;
 
     if (format === 'json') {
+      // For JSON, stringify the entire content object
       blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
       filename = `${content.title.substring(0, 30)}-${Date.now()}.json`;
     } else {
+      // For TXT and MD, only save the content text
       blob = new Blob([content.content], { type: 'text/plain' });
       filename = `${content.title.substring(0, 30)}-${Date.now()}.${format}`;
     }
 
+    // Create temporary download link and trigger click
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -94,11 +129,20 @@ export default function HistoryPage() {
     URL.revokeObjectURL(url);
   };
 
+  /**
+   * Copies content to clipboard
+   * @param content - Text content to copy
+   */
   const handleCopy = (content: string) => {
     navigator.clipboard.writeText(content);
     alert('Content copied to clipboard!');
   };
 
+  /**
+   * Formats ISO date string to human-readable format
+   * @param dateString - ISO date string
+   * @returns Formatted date string
+   */
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -110,6 +154,9 @@ export default function HistoryPage() {
     });
   };
 
+  /**
+   * Logs out user and redirects to home page
+   */
   const handleLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
@@ -119,6 +166,11 @@ export default function HistoryPage() {
     }
   };
 
+  /**
+   * Returns Tailwind CSS classes for content type badges
+   * @param type - Content type (blog, marketing, social-media)
+   * @returns CSS class string
+   */
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'blog':
@@ -207,6 +259,7 @@ export default function HistoryPage() {
 
               {/* History List */}
               <div className="space-y-2 max-h-96 overflow-y-auto">
+                {/* Show error message if fetch failed */}
                 {error ? (
                   <div className="text-center py-8">
                     <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
@@ -214,8 +267,10 @@ export default function HistoryPage() {
                     </div>
                   </div>
                 ) : isLoading ? (
+                  /* Show loading state while fetching */
                   <div className="text-center py-8 text-gray-500">Loading...</div>
                 ) : history.length === 0 ? (
+                  /* Show empty state if no content exists */
                   <div className="text-center py-8 text-gray-500">
                     <p>No content generated yet</p>
                     <Link href="/" className="text-blue-600 hover:underline mt-2 inline-block">
@@ -223,6 +278,7 @@ export default function HistoryPage() {
                     </Link>
                   </div>
                 ) : (
+                  /* Render list of content items */
                   history.map((item) => (
                     <button
                       key={item.id}
@@ -251,8 +307,10 @@ export default function HistoryPage() {
 
           {/* Main Content Area - Selected Content */}
           <div className="lg:col-span-2">
+            {/* Show selected content details and actions, or empty state */}
             {selectedContent ? (
               <div className="bg-white rounded-lg shadow-lg p-6">
+                {/* Content Header with title and metadata */}
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">{selectedContent.title}</h2>
@@ -265,7 +323,7 @@ export default function HistoryPage() {
                   </div>
                 </div>
 
-                {/* Action Buttons */}
+                {/* Action Buttons - Copy, Export, Delete */}
                 <div className="flex flex-wrap gap-2 mb-6">
                   <button
                     onClick={() => handleCopy(selectedContent.content)}
@@ -286,12 +344,6 @@ export default function HistoryPage() {
                     Export .MD
                   </button>
                   <button
-                    onClick={() => handleDownload(selectedContent, 'json')}
-                    className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Export .JSON
-                  </button>
-                  <button
                     onClick={() => handleDelete(selectedContent.id)}
                     className="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors ml-auto"
                   >
@@ -299,7 +351,7 @@ export default function HistoryPage() {
                   </button>
                 </div>
 
-                {/* Content Display */}
+                {/* Content Display - Shows the actual generated text */}
                 <div className="prose max-w-none">
                   <div className="whitespace-pre-wrap text-gray-800 bg-gray-50 p-6 rounded-lg border border-gray-200">
                     {selectedContent.content}
@@ -307,6 +359,7 @@ export default function HistoryPage() {
                 </div>
               </div>
             ) : (
+              /* Empty state - No content selected */
               <div className="bg-white rounded-lg shadow-lg p-12 text-center">
                 <div className="text-6xl mb-4">📚</div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Select Content to View</h2>

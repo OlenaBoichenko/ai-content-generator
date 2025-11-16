@@ -103,8 +103,8 @@ export const templates: Template[] = [
     description: 'Interactive content to boost engagement',
     contentType: 'social-media',
     icon: '💬',
-    prompt: 'Create engaging social media posts about {topic} that encourage audience interaction. Include questions, polls ideas, or conversation starters. Write for {platform}.',
-    placeholders: ['topic', 'platform']
+    prompt: 'Create engaging social media posts about {topic} that encourage audience interaction. Include questions, polls ideas, or conversation starters. Write for {platform (e.g., Instagram, Facebook, LinkedIn, Twitter/X)}.',
+    placeholders: ['topic', 'platform (e.g., Instagram, Facebook, LinkedIn, Twitter/X)']
   },
   {
     id: 'social-educational',
